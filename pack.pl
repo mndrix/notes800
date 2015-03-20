@@ -1,6 +1,9 @@
 name(notes800).
 title('Query phone number data from 800notes.com').
 
+requires(delay).
+requires(web).
+
 version('0.1.0').
 download('https://github.com/mndrix/notes800/archive/v0.1.0.zip').
 
