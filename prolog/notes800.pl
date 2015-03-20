@@ -1,6 +1,8 @@
-:- module(notes800, []).
+:- module(notes800, [caller_id/3]).
 :- use_module(library(dcg/basics), [integer//1,string//1,string_without//2]).
 :- use_module(library(delay)).
+:- use_module(library(rbtrees)).
+:- use_module(library(pairs)).
 :- use_module(library(solution_sequences)).
 :- use_module(library(web), []).
 :- use_module(library(xpath)).
@@ -9,6 +11,50 @@
 %
 % `Phone` - a phone number
 % `PageN` - the number of an HTML page of results
+
+%% caller_id(+Phone:string,-Caller:string,-Type:atom) is det.
+caller_id(Phone,Caller,Type) :-
+    rb_empty(EmptyCallers),
+    rb_empty(EmptyTypes),
+    A0 = x(EmptyCallers,EmptyTypes),
+    fold_solutions(accum(Name,Value),limit(10,attribute(Phone,Name,Value)),A0,A),
+    A= x(Callers,Types),
+    once( rb_popular(Callers,Caller); Caller="Unknown" ),
+    once( rb_popular(Types,Type); Type=unknown ),
+    !.
+caller_id(_,"Unknown",unknown).
+
+accum(caller,Caller,x(T0,X),x(T,X)) :-
+    !,
+    rb_increment(T0,Caller,T).
+accum(type,Value,x(X,T0),x(X,T)) :-
+    !,
+    rb_increment(T0,Value,T).
+accum(_,_,Accum,Accum).
+
+rb_increment(T0,Key,T) :-
+    ( rb_update(T0,Key,Old,New,T) ->
+        succ(Old,New)
+    ; otherwise ->
+        rb_insert(T0,Key,1,T)
+    ).
+
+rb_popular(T,Key) :-
+    rb_visit(T,Pairs),
+    transpose_pairs(Pairs,LeastToGreatest),
+    reverse(LeastToGreatest,[_-Key|_]).
+
+
+fold_solutions(F,Goal,Accum0,Accum) :-
+    Ref = ref(Accum0),
+    ( call(Goal),
+      Ref = ref(A0),
+      call(F,A0,A1),
+      nb_setarg(1,Ref,A1),
+      fail
+    ; Ref = ref(Accum)
+    ).
+
 
 %% attribute(+Phone,-Name,-Value) is multi.
 attribute(Phone,Name,Value) :-
