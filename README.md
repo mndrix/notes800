@@ -7,6 +7,8 @@
 
 # Description
 
+[800notes](http://800notes.com/) is one of the largest communities for reporting and discussing unknown telephone numbers.  This pack provides a convenient way to query the site for details about a specific number.
+
 # Installation
 
 Using SWI-Prolog 7.1 or later:
