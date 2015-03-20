@@ -55,17 +55,25 @@ page_n(N) -->
 
 %% page(+Phone,-Page)
 %
-%  Iterates each Page of results for a given Phone.
+%  Iterates each Page of results for a given Phone from youngest to
+%  oldest.
 page(Phone,Page) :-
-    page(Phone,1,Page).
+    url(Phone,1,Url),
+    web:get(Url,[html5(FirstPage)]),
+    once( aggregate(max(N),U^pager_specific(FirstPage,N,U),MaxPageN)
+        ; MaxPageN = 1
+        ),
+    ( page_(Phone,MaxPageN,Page)
+    ; Page=FirstPage
+    ).
 
-page(Phone,PageN,Page) :-
+page_(Phone,PageN,Page) :-
+    PageN > 1,
     url(Phone,PageN,Url),
     web:get(Url,[html5(Dom)]),
-    succ(PageN, NextPageN),
-    ( Page = Dom
-    ; pager_specific(Dom,NextPageN,_),
-      page(Phone,NextPageN,Page)
+    ( Page=Dom
+    ; succ(PrevPageN,PageN),
+      page_(Phone,PrevPageN,Page)
     ).
 
 
