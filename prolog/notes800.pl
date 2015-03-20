@@ -13,6 +13,10 @@
 % `PageN` - the number of an HTML page of results
 
 %% caller_id(+Phone:string,-Caller:string,-Type:atom) is det.
+%
+%  Determine the Caller and call Type for a given Phone number.
+%  If 800notes.com lacks information for Caller, a default value
+%  of `"Unknown"` is used; for Type, a default of `unknown`.
 caller_id(Phone,Caller,Type) :-
     rb_empty(EmptyCallers),
     rb_empty(EmptyTypes),

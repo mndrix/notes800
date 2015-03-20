@@ -1,13 +1,15 @@
 # Synopsis
 
-    :- use_module(library(notes800)).
-    main :-
-        % give one motivating example
-        true.
+```prolog
+:- use_module(library(notes800), []).
+?- notes800:caller_id("1-877-528-5852",Caller,Type).
+Caller = "ERG",
+Type = debt_collector.
+```
 
 # Description
 
-[800notes](http://800notes.com/) is one of the largest communities for reporting and discussing unknown telephone numbers.  This pack provides a convenient way to query the site for details about a specific number.
+[800notes](http://800notes.com/) is one of the largest communities for reporting and discussing  telephone numbers (telemarketing, prank calls, surveys, etc).  This pack provides a convenient way to query that site for details about a specific number.
 
 # Installation
 
